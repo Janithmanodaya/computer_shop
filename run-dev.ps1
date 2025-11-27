@@ -84,7 +84,8 @@ if (Test-Path ".\prisma\schema.prisma") {
 # 6) Start backend server in a separate window
 Write-Host ""
 Write-Host "Starting backend server at http://localhost:4000 ..."
-$backendProcess = Start-Process -FilePath "npm" -ArgumentList "run start:dev" -WorkingDirectory "$PSScriptRoot\backend" -WindowStyle Normal -PassThru
+# Use cmd.exe to reliably start npm on Windows even if file associations are customized
+$backendProcess = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run start:dev" -WorkingDirectory "$PSScriptRoot\backend" -WindowStyle Normal -PassThru
 
 if (-not $backendProcess) {
   Write-Warning "Failed to start backend process."
