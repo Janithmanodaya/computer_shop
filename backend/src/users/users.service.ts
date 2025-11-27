@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Role } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+
+type RoleString = 'CUSTOMER' | 'ADMIN' | 'STAFF';
 
 interface CreateUserInput {
   email: string;
   passwordHash: string;
   name?: string;
-  role: Role;
+  role: RoleString;
 }
 
 @Injectable()
@@ -37,7 +39,7 @@ export class UsersService {
       data: {
         email: adminEmail,
         passwordHash,
-        role: Role.ADMIN
+        role: 'ADMIN'
       }
     });
   }

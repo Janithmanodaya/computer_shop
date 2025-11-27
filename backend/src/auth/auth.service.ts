@@ -2,19 +2,20 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
-import { Role } from '@prisma/client';
+
+type RoleString = 'CUSTOMER' | 'ADMIN' | 'STAFF';
 
 interface JwtPayload {
   sub: string;
   email: string;
-  role: Role;
+  role: RoleString;
 }
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-  private readonly jwtService: JwtService
+    private readonly jwtService: JwtService
   ) {}
 
   async register(email: string, password: string, name?: string) {
@@ -40,10 +41,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.buildTokens(user.id, user.email, user.role);
+    return this.buildTokens(user.id, user.email, user.role as RoleString);
   }
 
-  private async buildTokens(userId: string, email: string, role: Role) {
+  private async buildTokens(userId: string, email: string, role: RoleString) {
     const payload: JwtPayload = { sub: userId, email, role };
     const accessToken = await this.jwtService.signAsync(payload);
     return {
