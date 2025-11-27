@@ -24,10 +24,10 @@ export class AuthService {
       email,
       passwordHash,
       name,
-      role: Role.CUSTOMER
+      role: 'CUSTOMER'
     });
 
-    return this.buildTokens(user.id, user.email, user.role);
+    return this.buildTokens(user.id, user.email, user.role as RoleString);
   }
 
   async login(email: string, password: string) {
