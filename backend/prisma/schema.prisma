@@ -12,7 +12,7 @@ model User {
   email        String   @unique
   passwordHash String
   name         String?
-  role         Role     @default(CUSTOMER)
+  role         String   @default(CUSTOMER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -41,22 +41,22 @@ model Category {
 }
 
 model Product {
-  id             String          @id @default(cuid())
+  id             String   @id @default(cuid())
   name           String
-  slug           String          @unique
-  sku            String          @unique
+  slug           String   @unique
+  sku            String   @unique
   brand          String?
   description    String?
   longDescription String?
-  status         ProductStatus   @default(DRAFT)
-  price          Decimal         @db.Decimal(10, 2)
-  compareAtPrice Decimal?        @db.Decimal(10, 2)
-  currency       String          @default("USD")
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  status         String   @default("DRAFT")
+  price          Float
+  compareAtPrice Float?
+  currency       String   @default("USD")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   categoryId     String
-  category       Category        @relation(fields: [categoryId], references: [id])
+  category       Category @relation(fields: [categoryId], references: [id])
 
   images         ProductImage[]
   variants       ProductVariant[]
@@ -83,8 +83,8 @@ model ProductVariant {
   name           String?
   sku            String?  @unique
   attributesJson String?  @map("attributes_json")
-  price          Decimal? @db.Decimal(10, 2)
-  compareAtPrice Decimal? @db.Decimal(10, 2)
+  price          Float?
+  compareAtPrice Float?
   stockQuantity  Int      @default(0)
   isDefault      Boolean  @default(false)
 
@@ -93,14 +93,3 @@ model ProductVariant {
   @@map("product_variants")
 }
 
-enum Role {
-  CUSTOMER
-  ADMIN
-  STAFF
-}
-
-enum ProductStatus {
-  DRAFT
-  ACTIVE
-  ARCHIVED
-}
