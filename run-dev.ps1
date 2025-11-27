@@ -113,8 +113,8 @@ Write-Host "Starting Next.js dev server at http://localhost:3000 ..."
 Write-Host "Press Ctrl+C in this window to stop the frontend server."
 Write-Host ""
 
-# 8) Run frontend dev server and keep PowerShell open
-npm run dev
+# 8) Run frontend dev server via npx (avoids relying on a global or broken local 'next' binary)
+npx next dev
 Write-Host ""
 Write-Host "Frontend dev server exited with code: $LASTEXITCODE"
 Write-Host "Backend window (if still open) can be closed separately."
