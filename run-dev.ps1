@@ -84,7 +84,8 @@ if (Test-Path ".\prisma\schema.prisma") {
 # 6) Start backend server in a separate window
 Write-Host ""
 Write-Host "Starting backend server at http://localhost:4000 ..."
-$backendProcess = Start-Process -FilePath "npm" -ArgumentList "run start:dev" -WorkingDirectory "$PSScriptRoot\backend" -WindowStyle Normal -PassThru
+# Use cmd.exe to reliably start npm on Windows even if file associations are customized
+$backendProcess = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run start:dev" -WorkingDirectory "$PSScriptRoot\backend" -WindowStyle Normal -PassThru
 
 if (-not $backendProcess) {
   Write-Warning "Failed to start backend process."
@@ -95,16 +96,13 @@ Write-Host ""
 Write-Host "Checking frontend dependencies..."
 Set-Location -LiteralPath "$PSScriptRoot\frontend"
 
-if (-not (Test-Path "node_modules")) {
-  Write-Host "frontend/node_modules not found. Installing frontend dependencies..."
-  npm install
-  if ($LASTEXITCODE -ne 0) {
-    Write-Host "ERROR: npm install (frontend) failed (exit code $LASTEXITCODE)" -ForegroundColor Red
-    Read-Host "Press Enter to close"
-    exit $LASTEXITCODE
-  }
-} else {
-  Write-Host "Frontend dependencies already installed."
+# Always run npm install for frontend to ensure Next.js is available
+Write-Host "Installing/updating frontend dependencies (this may take a moment)..."
+npm install
+if ($LASTEXITCODE -ne 0) {
+  Write-Host "ERROR: npm install (frontend) failed (exit code $LASTEXITCODE)" -ForegroundColor Red
+  Read-Host "Press Enter to close"
+  exit $LASTEXITCODE
 }
 
 Write-Host ""
@@ -112,8 +110,8 @@ Write-Host "Starting Next.js dev server at http://localhost:3000 ..."
 Write-Host "Press Ctrl+C in this window to stop the frontend server."
 Write-Host ""
 
-# 8) Run frontend dev server and keep PowerShell open
-npm run dev
+# 8) Run frontend dev server via npx using the project local Next.js
+npx next dev
 Write-Host ""
 Write-Host "Frontend dev server exited with code: $LASTEXITCODE"
 Write-Host "Backend window (if still open) can be closed separately."
